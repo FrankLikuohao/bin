@@ -1,0 +1,20 @@
+#!/bin/bash  -xv
+server='1.34.130.91'
+user=$1
+if [ $user == "" ]; then
+	user=`whoami`
+fi
+dir="/home/frank/sshfs/$user@center"
+if [ ! -d $dir ]; then
+    mkdir  $dir
+    echo "mkdir  $dir"
+fi
+
+if [ "$user" == "root" ]; then
+	sudo chmod a+rw  $dir
+	#$HOME=`cat /etc/passwd | grep $user | cut -d ":" -f6`
+	HOME='/'
+fi
+#echo $HOME
+#sshfs -p 6002 root@1.34.130.91:/ /home/frank/sshfs/root@center
+sshfs -p 6002 $user@$server:$HOME /home/frank/sshfs/$user@center

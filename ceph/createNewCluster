@@ -1,0 +1,89 @@
+sudo scp /etc/hosts vmon2:/etc 
+sudo scp /etc/hosts vmon3:/etc
+sudo scp /etc/hosts vmon4:/etc
+
+ceph-deploy --cluster test new vmon2
+ceph-deploy --cluster test install vmon2 vmon3 vmon4
+vi test.conf
+ceph-deploy --cluster test mon create-initial
+ceph-deploy --cluster test osd create vmon2:/dev/sdb vmon3:/dev/sdb vmon4:/dev/sdb
+ceph-deploy --cluster test admin vdeploy vmon2 vmon3 vmon4
+
+ceph-deploy --cluster test disk zap 172.20.10.11:/dev/sdc
+ceph-deploy --cluster test disk zap 172.20.10.12:/dev/sdc
+ceph-deploy --cluster test disk zap 172.20.10.13:/dev/sdc
+ceph-deploy --cluster test osd create osd0:/dev/sdc osd1:/dev/sdc osd2:/dev/sdc
+ceph-deploy --cluster test admin vdeploy osd0 osd1 osd2
+
+
+
+ssh storage0 sudo apt-get install ntp
+ssh storage1 sudo apt-get install ntp
+ssh storage2 sudo apt-get install ntp
+ssh storage3 sudo apt-get install ntp
+ssh vmon2 sudo apt-get install ntp
+ssh vmon3 sudo apt-get install ntp
+ssh vmon4 sudo apt-get install ntp
+  
+
+ceph-deploy --cluster test purge vmon2 vmon3 vmon4 storage0 storage1 storage2 storage3
+ceph-deploy --cluster test purgedata vmon2 vmon3 vmon4 storage0 storage1 storage2 storage3
+ceph-deploy --cluster test new vmon2 storage3 storage0
+ceph-deploy --cluster test install vmon2 vmon3 vmon4 storage0 storage1 storage2 storage3
+vi test.conf
+ceph-deploy --cluster test mon create-initial
+
+#add osd one by one 
+
+ceph-deploy --cluster test disk zap vmon2:/dev/sdb vmon3:/dev/sdb vmon4:/dev/sdb 172.20.10.11:/dev/sdc 172.20.10.12:/dev/sdc 172.20.10.13:/dev/sdc
+ceph-deploy --cluster test osd create vmon2:/dev/sdb vmon3:/dev/sdb vmon4:/dev/sdb storage1:/dev/sdc storage2:/dev/sdc storage3:/dev/sdc
+ceph-deploy --cluster test --overwrite-conf admin vdeploy vmon2 vmon3 vmon4 storage0  storage1 storage0 storage2 storage3
+[vmon2]sudo chmod +r /etc/ceph/test.client.admin.keyring
+[storage0]sudo chmod +r /etc/ceph/test.client.admin.keyring
+[storage3]sudo chmod +r /etc/ceph/test.client.admin.keyring
+ceph1 osd pool set rbd pg_num 128
+
+
+
+[global]
+fsid = 829e35d9-9e20-464f-bf7b-8dc660b94707
+mon_initial_members = vmon2, storage0, storage3
+mon_host = 172.20.44.7:6790,172.20.10.10:6790,172.20.10.13:6790
+auth_cluster_required = cephx
+auth_service_required = cephx
+auth_client_required = cephx
+filestore_xattr_use_omap = true
+
+osd pool default size = 2
+
+
+
+#mds
+ ceph-deploy --cluster test mds create storage0
+ 
+ ceph --cluster test osd pool create cephfs_data 128
+ ceph --cluster test osd pool create cephfs_metadata 128
+ ceph --cluster test fs new ceph_fs cephfs_metadata cephfs_data
+ 
+ su
+ ceph --cluster test auth get-or-create client.cephfs mon 'allow r' osd 'allow rwx pool=cephfs' -o /etc/ceph/client.cephfs.keyring
+
+sudo ceph-fuse --cluster test -o nonempty -m 172.20.10.10:6790 /home/frank/cephfuse/
+frank@storage0:/var/lib/ceph$ sudo mount -t ceph 172.20.10.10:6790:/ /mnt/mycephfs -o name=admin,secret=AQADnNlUmFRwORAAQMHONeNYlodnFx894gGkfQ==
+frank@storage0:/var/lib/ceph$ df
+Filesystem                     1K-blocks     Used  Available Use% Mounted on
+/dev/mapper/storage0--vg-root  952799140  6264188  898112452   1% /
+none                                   4        0          4   0% /sys/fs/cgroup
+udev                             4053920       12    4053908   1% /dev
+tmpfs                             813024      856     812168   1% /run
+none                                5120        0       5120   0% /run/lock
+none                             4065112       12    4065100   1% /run/shm
+none                              102400        0     102400   0% /run/user
+/dev/sda1                         240972    36904     191627  17% /boot
+ceph-fuse                     2967515136 50610176 2916904960   2% /home/frank/cephfuse
+172.20.10.10:6790:/           2967515136 50610176 2916904960   2% /mnt/mycephfs
+
+ceph-deploy  --cluster test disk list storage0
+
+zip -r ref.zip ref
+dd if=./ref.zip of=/tmp/test.zip bs=10 count=10

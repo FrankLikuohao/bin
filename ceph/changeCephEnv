@@ -1,0 +1,16 @@
+#ssh ceph envirnment
+ssh vmon2 sudo chmod a+rw '/etc/ceph/*.conf'
+ssh vmon3 sudo chmod a+rw '/etc/ceph/*.conf'
+ssh vmon4 sudo chmod a+rw '/etc/ceph/*.conf'
+
+mkdir /home/frank/sshfs/vmon2
+sshfs -p 22 -o nonempty vmon2:/ /home/frank/sshfs/vmon2
+
+mkdir /home/frank/sshfs/vmon3
+sshfs -p 22 -o nonempty vmon3:/ /home/frank/sshfs/vmon3
+
+mkdir /home/frank/sshfs/vmon4
+sshfs -p 22 -o nonempty vmon4:/ /home/frank/sshfs/vmon4
+
+mkdir /home/frank/sshfs/vdeploy
+sshfs -p 22 -o nonempty vdeploy:/ /home/frank/sshfs/vdeploy

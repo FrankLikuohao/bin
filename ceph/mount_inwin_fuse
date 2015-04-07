@@ -1,0 +1,6 @@
+sudo mkdir /home/inwin/cephfuse
+sudo ceph-fuse --cluster test -o nonempty -m 172.20.10.10:6790 /home/inwin/cephfuse/
+df -H
+sudo mkdir /home/inwin/cephfuse/test
+sudo chmod 777 /home/inwin/cephfuse/test
+

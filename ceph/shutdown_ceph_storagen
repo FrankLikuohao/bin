@@ -1,0 +1,14 @@
+#monitor first
+ssh-copy-id root@storage1
+ssh root@storage1 init 0
+
+ssh-copy-id root@storage3
+ssh root@storage3 init 0
+
+#then osd 
+ssh-copy-id root@storage2
+ssh root@storage2 init 0
+
+
+ssh-copy-id root@storage0
+ssh root@storage0 init 0

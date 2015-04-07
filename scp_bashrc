@@ -1,0 +1,10 @@
+#scp bashrc envirnment
+scp ~/.bashrc 'vdeploy:~'
+scp ~/.bashrc 'vmon2:~'
+scp ~/.bashrc 'vmon3:~'
+scp ~/.bashrc 'vmon4:~'
+
+scp ~/.bashrc 'osd0:~'
+scp ~/.bashrc 'osd1:~'
+scp ~/.bashrc 'osd2:~'
+scp ~/.bashrc 'mons:~'

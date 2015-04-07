@@ -1,0 +1,15 @@
+#scp vimrc envirnment
+scp ~/.vimrc 'vdeploy:~'
+scp ~/.vimrc 'vosd0:~'
+scp ~/.vimrc 'vosd1:~'
+scp ~/.vimrc 'vosd2:~'
+scp ~/.vimrc 'vosd3:~'
+scp ~/.vimrc 'vosd4:~'
+scp ~/.vimrc 'vmon2:~'
+scp ~/.vimrc 'vmon3:~'
+scp ~/.vimrc 'vmon4:~'
+
+scp ~/.vimrc 'osd0:~'
+scp ~/.vimrc 'osd1:~'
+scp ~/.vimrc 'osd2:~'
+scp ~/.vimrc 'mons:~'

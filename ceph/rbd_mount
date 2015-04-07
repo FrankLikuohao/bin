@@ -1,0 +1,12 @@
+rbd --cluster test ls
+#ceph1 -s
+sudo rbd --cluster test map frank_image --pool rbd -m 172.20.10.10:6790
+ls -al /dev/rbd/rbd/frank_image 
+#sudo mkfs.ext4 -m0 /dev/rbd/rbd/frank_image
+sudo mkdir /mnt/ceph
+sudo mount /dev/rbd/rbd/frank_image /mnt/ceph/
+df -H
+sudo chmod 777 /mnt/ceph/
+date > /mnt/ceph/date
+more  /mnt/ceph/date
+
