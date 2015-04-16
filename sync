@@ -1,0 +1,11 @@
+#–delete參數的意思是說，server端檔案如果刪除，client端也會刪除
+#xxx@xxx.xxx.xxx:/var/www server
+#mount /dev/sdc5               /home/frank/wd
+#client exec 
+#rsync -av --delete -e ssh xxx@xxx.xxx.xxx:/var/www /home/backup
+rsync -av  -e ssh frank@localhost:/home/frank/data/job/vdeploy /home/frank/wd/job-inwin/ceph
+rsync -av  -e ssh frank@localhost:/home/frank/Desktop /home/frank/wd/job-inwin
+rsync -av  -e ssh frank@localhost:/home/frank/bin /home/frank/wd/job-inwin
+
+#push to center
+rsync -av  -e "ssh -p 6002 -l frank  " /home/frank/data/job/vdeploy frank@1.34.130.91:/home/frank/inwin/job
